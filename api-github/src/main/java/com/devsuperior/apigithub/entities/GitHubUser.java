@@ -1,11 +1,17 @@
 package com.devsuperior.apigithub.entities;
 
+import jakarta.persistence.*;
+
 import java.util.Objects;
 
+@Entity
+@Table(name = "tb_user")
 public class GitHubUser {
 
     private String login;
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     private String nodeId;
