@@ -1,6 +1,7 @@
 package com.devsuperior.apigithub.services;
 
 import com.devsuperior.apigithub.dto.GitHubUserDTO;
+import com.devsuperior.apigithub.dto.GitHubUserDetailsDTO;
 import com.devsuperior.apigithub.dto.GitHubUserPageDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
@@ -30,5 +31,14 @@ public class GitHubUserService {
         long newSince = result.getBody().get(result.getBody().size() - 1).getId();
         dto.setNext("http://localhost:8080/api/users?since=" + newSince);
         return dto;
+    }
+
+    public GitHubUserDetailsDTO getGitHubUserDetails(String username) {
+
+        ParameterizedTypeReference<GitHubUserDetailsDTO> responseType = new ParameterizedTypeReference<GitHubUserDetailsDTO>() {
+        };
+
+        ResponseEntity<GitHubUserDetailsDTO> result = restTemplate.exchange("https://api.github.com/users/" + username, HttpMethod.GET, null, responseType);
+        return result.getBody();
     }
 }
