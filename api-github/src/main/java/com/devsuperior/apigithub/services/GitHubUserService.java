@@ -1,8 +1,6 @@
 package com.devsuperior.apigithub.services;
 
-import com.devsuperior.apigithub.dto.GitHubUserDTO;
-import com.devsuperior.apigithub.dto.GitHubUserDetailsDTO;
-import com.devsuperior.apigithub.dto.GitHubUserPageDTO;
+import com.devsuperior.apigithub.dto.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
@@ -22,7 +20,8 @@ public class GitHubUserService {
         ParameterizedTypeReference<List<GitHubUserDTO>> responseType = new ParameterizedTypeReference<List<GitHubUserDTO>>() {
         };
 
-        ResponseEntity<List<GitHubUserDTO>> result = restTemplate.exchange("https://api.github.com/users?since=" + sinceId, HttpMethod.GET, null, responseType);
+        ResponseEntity<List<GitHubUserDTO>> result = restTemplate
+                .exchange("https://api.github.com/users?since=" + sinceId, HttpMethod.GET, null, responseType); //ex1 GET
 
         GitHubUserPageDTO dto = new GitHubUserPageDTO();
 
@@ -34,11 +33,20 @@ public class GitHubUserService {
     }
 
     public GitHubUserDetailsDTO getGitHubUserDetails(String username) {
+        ResponseEntity<GitHubUserDetailsDTO> result = restTemplate
+                .getForEntity("https://api.github.com/users/" + username, GitHubUserDetailsDTO.class); //ex2 GET
+        return result.getBody();
+    }
 
-        ParameterizedTypeReference<GitHubUserDetailsDTO> responseType = new ParameterizedTypeReference<GitHubUserDetailsDTO>() {
+    public GitHubUserRepositoryPageDTO getGitHubUserRepositoriesPage(String username) {
+        ParameterizedTypeReference<List<GitHubUserRepositoryDTO>> responseType = new ParameterizedTypeReference<List<GitHubUserRepositoryDTO>>() {
         };
 
-        ResponseEntity<GitHubUserDetailsDTO> result = restTemplate.exchange("https://api.github.com/users/" + username, HttpMethod.GET, null, responseType);
-        return result.getBody();
+        ResponseEntity<List<GitHubUserRepositoryDTO>> result = restTemplate
+                .exchange("https://api.github.com/users/" + username + "/repos", HttpMethod.GET, null, responseType); //ex1 GET
+
+        GitHubUserRepositoryPageDTO dto = new GitHubUserRepositoryPageDTO();
+        dto.setContent(result.getBody());
+        return dto;
     }
 }

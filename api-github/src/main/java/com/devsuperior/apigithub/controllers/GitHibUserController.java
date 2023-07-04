@@ -2,6 +2,7 @@ package com.devsuperior.apigithub.controllers;
 
 import com.devsuperior.apigithub.dto.GitHubUserDetailsDTO;
 import com.devsuperior.apigithub.dto.GitHubUserPageDTO;
+import com.devsuperior.apigithub.dto.GitHubUserRepositoryPageDTO;
 import com.devsuperior.apigithub.services.GitHubUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -21,10 +22,15 @@ public class GitHibUserController {
         return ResponseEntity.ok(dto);
     }
 
-
     @GetMapping(value = "/users/{username}/details")
     public ResponseEntity<GitHubUserDetailsDTO> findUserDetails(@PathVariable String username) {
         GitHubUserDetailsDTO dto = service.getGitHubUserDetails(username);
+        return ResponseEntity.ok(dto);
+    }
+
+    @GetMapping(value = "/users/{username}/repos")
+    public ResponseEntity<GitHubUserRepositoryPageDTO> findUserRepositories(@PathVariable String username) {
+        GitHubUserRepositoryPageDTO dto = service.getGitHubUserRepositoriesPage(username);
         return ResponseEntity.ok(dto);
     }
 }
