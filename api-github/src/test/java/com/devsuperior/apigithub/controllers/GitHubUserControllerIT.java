@@ -1,5 +1,6 @@
 package com.devsuperior.apigithub.controllers;
 
+import com.devsuperior.apigithub.dto.GitHubUserDetailsDTO;
 import com.devsuperior.apigithub.dto.GitHubUserPageDTO;
 import com.devsuperior.apigithub.services.GitHubUserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -28,10 +29,18 @@ public class GitHubUserControllerIT {
     @Autowired
     private GitHubUserService service;
 
+    private Long sinceId;
+    private String username;
+
+    @BeforeEach
+    void setUp() throws Exception {
+        sinceId = 30L;
+        username = "renatahassum";
+    }
+
     @Test
     public void testFindAllPage_ReturnsUserPage() throws Exception {
         // Arrange
-        Long sinceId = 30L;
         GitHubUserPageDTO expectedPage = service.getGitHubUsersPage(sinceId);
 
         // Act
@@ -44,7 +53,17 @@ public class GitHubUserControllerIT {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.next").value(expectedPage.getNext()));
     }
 
+    @Test
+    public void testFindUserDetails_ReturnsUserDetails() throws Exception {
+        // Arrange
+        GitHubUserDetailsDTO expectedDetails = service.getGitHubUserDetails(username);
 
-
+        // Act
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/users/{username}/details", username))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.login").value(expectedDetails.getLogin()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.name").value(expectedDetails.getName()));
+    }
 
 }
