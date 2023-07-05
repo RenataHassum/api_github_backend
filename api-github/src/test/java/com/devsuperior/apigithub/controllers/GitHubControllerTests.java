@@ -52,6 +52,7 @@ public class GitHubControllerTests {
 
         when(service.getGitHubUsersPage(Mockito.eq(sinceId))).thenReturn(userPage);
         when(service.getGitHubUserDetails(Mockito.eq(username))).thenReturn(userDetails);
+        when(service.getGitHubUserRepositoriesPage(Mockito.eq(username))).thenReturn(userRepositories);
     }
 
     @Test
@@ -83,4 +84,28 @@ public class GitHubControllerTests {
                 });
     }
 
+    @Test
+    public void testFindUserRepositories_ReturnsUserRepositories() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/users/{username}/repos", username)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(result -> {
+                    String json = result.getResponse().getContentAsString();
+                    GitHubUserRepositoryPageDTO responseDto = objectMapper.readValue(json, GitHubUserRepositoryPageDTO.class);
+
+                    List<GitHubUserRepositoryDTO> expectedRepositories = userRepositories.getContent();
+                    List<GitHubUserRepositoryDTO> actualRepositories = responseDto.getContent();
+
+                    Assertions.assertEquals(expectedRepositories.size(), actualRepositories.size());
+
+                    for (int i = 0; i < expectedRepositories.size(); i++) {
+                        GitHubUserRepositoryDTO expectedRepository = expectedRepositories.get(i);
+                        GitHubUserRepositoryDTO actualRepository = actualRepositories.get(i);
+
+                        Assertions.assertEquals(expectedRepository.getId(), actualRepository.getId());
+                        Assertions.assertEquals(expectedRepository.getNodeId(), actualRepository.getNodeId());
+                        Assertions.assertEquals(expectedRepository.getName(), actualRepository.getName());
+                    }
+                });
+    }
 }
