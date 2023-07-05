@@ -1,12 +1,10 @@
 package com.devsuperior.apigithub.controllers;
 
-import com.devsuperior.apigithub.dto.GitHubUserDTO;
-import com.devsuperior.apigithub.dto.GitHubUserDetailsDTO;
-import com.devsuperior.apigithub.dto.GitHubUserPageDTO;
-import com.devsuperior.apigithub.dto.GitHubUserRepositoryPageDTO;
+import com.devsuperior.apigithub.dto.*;
 import com.devsuperior.apigithub.services.GitHubUserService;
 import com.devsuperior.apigithub.tests.Factory;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -36,6 +34,7 @@ public class GitHubControllerTests {
     @Autowired
     private ObjectMapper objectMapper;
 
+    private String username;
     private Long sinceId;
     private List<GitHubUserDTO> mockUserList;
     private GitHubUserPageDTO userPage;
@@ -44,6 +43,7 @@ public class GitHubControllerTests {
 
     @BeforeEach
     void setUp() throws Exception {
+        username = "john";
         sinceId = 46L;
         mockUserList = Factory.createMockUserList();
         userPage = new GitHubUserPageDTO();
@@ -51,6 +51,7 @@ public class GitHubControllerTests {
         userRepositories = Factory.createMockGitHubUserRepositoryPage();
 
         when(service.getGitHubUsersPage(Mockito.eq(sinceId))).thenReturn(userPage);
+        when(service.getGitHubUserDetails(Mockito.eq(username))).thenReturn(userDetails);
     }
 
     @Test
@@ -66,4 +67,20 @@ public class GitHubControllerTests {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.content.length()").value(mockUserList.size()))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.next").value(userPage.getNext()));
     }
+
+    @Test
+    public void testFindUserDetails_ReturnsUserDetails() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/users/{username}/details", username)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(result -> {
+                    String json = result.getResponse().getContentAsString();
+                    GitHubUserDetailsDTO responseDto = objectMapper.readValue(json, GitHubUserDetailsDTO.class);
+
+                    Assertions.assertEquals(userDetails.getLogin(), responseDto.getLogin());
+                    Assertions.assertEquals(userDetails.getId(), responseDto.getId());
+                    Assertions.assertEquals(userDetails.getAvatarUrl(), responseDto.getAvatarUrl());
+                });
+    }
+
 }
