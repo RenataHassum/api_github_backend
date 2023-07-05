@@ -1,8 +1,6 @@
 package com.devsuperior.apigithub.services;
 
-import com.devsuperior.apigithub.dto.GitHubUserDTO;
-import com.devsuperior.apigithub.dto.GitHubUserDetailsDTO;
-import com.devsuperior.apigithub.dto.GitHubUserPageDTO;
+import com.devsuperior.apigithub.dto.*;
 import com.devsuperior.apigithub.tests.Factory;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -40,7 +39,6 @@ public class GitHubUserServiceTests {
     void setUp() throws Exception {
         sinceId = 46L;
         mockUserList = Factory.createMockUserList();
-        //  ResponseEntity<List<GitHubUserDTO>> mockResponseEntity = ResponseEntity.ok(mockUserList);
 
         when(restTemplate.exchange(
                 Mockito.anyString(),
@@ -61,7 +59,6 @@ public class GitHubUserServiceTests {
         ))
                 .thenReturn(ResponseEntity.ok(mockUserList));
 
-        // Execução do método a ser testado
         GitHubUserPageDTO result = service.getGitHubUsersPage(sinceId);
 
         List<GitHubUserDTO> users = result.getContent();
@@ -73,7 +70,7 @@ public class GitHubUserServiceTests {
     }
 
     @Test
-    public void getGitHubUserDetails_ShouldReturnUserDetails() {
+    public void testGetGitHubUserDetails_ShouldReturnUserDetails() {
         GitHubUserDetailsDTO userDetails = new GitHubUserDetailsDTO();
         userDetails.setId(1);
         userDetails.setLogin("john");
@@ -84,14 +81,28 @@ public class GitHubUserServiceTests {
                         ArgumentMatchers.eq(GitHubUserDetailsDTO.class)))
                 .thenReturn(mockResponseEntity);
 
-        // Execução do método a ser testado
         GitHubUserDetailsDTO result = service.getGitHubUserDetails("john");
 
-        // Verificação dos resultados
         Assertions.assertEquals(userDetails.getId(), result.getId());
         Assertions.assertEquals(userDetails.getLogin(), result.getLogin());
     }
 
+    @Test
+    public void testGetGitHubUserRepositoriesPage_ShouldReturnRepositoryPage() {
+        List<GitHubUserRepositoryDTO> repositories = new ArrayList<>();
+
+        ResponseEntity<List<GitHubUserRepositoryDTO>> mockResponseEntity = ResponseEntity.ok(repositories);
+        Mockito.when(restTemplate.exchange(
+                        ArgumentMatchers.anyString(),
+                        ArgumentMatchers.eq(HttpMethod.GET),
+                        ArgumentMatchers.isNull(),
+                        ArgumentMatchers.<ParameterizedTypeReference<List<GitHubUserRepositoryDTO>>>any()))
+                .thenReturn(mockResponseEntity);
+
+        GitHubUserRepositoryPageDTO result = service.getGitHubUserRepositoriesPage("john");
+
+        Assertions.assertEquals(repositories.size(), result.getContent().size());
+    }
 
 }
 
