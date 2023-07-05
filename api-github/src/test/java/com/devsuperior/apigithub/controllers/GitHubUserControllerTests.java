@@ -23,7 +23,7 @@ import static org.mockito.Mockito.when;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-public class GitHubControllerTests {
+public class GitHubUserControllerTests {
 
     @Autowired
     private MockMvc mockMvc;
