@@ -13,10 +13,6 @@ public class GitHubUserPageDTO {
         return content;
     }
 
-    public void setContent(List<GitHubUserDTO> content) {
-        this.content = content;
-    }
-
     public String getNext() {
         return next;
     }

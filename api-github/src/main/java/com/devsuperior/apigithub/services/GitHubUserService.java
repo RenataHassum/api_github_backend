@@ -25,7 +25,7 @@ public class GitHubUserService {
 
         GitHubUserPageDTO dto = new GitHubUserPageDTO();
 
-        dto.setContent(result.getBody());
+        dto.getContent().addAll(result.getBody());
 
         long newSince = result.getBody().get(result.getBody().size() - 1).getId();
         dto.setNext("http://localhost:8080/api/users?since=" + newSince);
@@ -46,7 +46,7 @@ public class GitHubUserService {
                 .exchange("https://api.github.com/users/" + username + "/repos", HttpMethod.GET, null, responseType); //ex1 GET
 
         GitHubUserRepositoryPageDTO dto = new GitHubUserRepositoryPageDTO();
-        dto.setContent(result.getBody());
+        dto.getContent().addAll(result.getBody());
         return dto;
     }
 }

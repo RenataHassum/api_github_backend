@@ -11,7 +11,4 @@ public class GitHubUserRepositoryPageDTO {
         return content;
     }
 
-    public void setContent(List<GitHubUserRepositoryDTO> content) {
-        this.content = content;
-    }
 }
