@@ -2,6 +2,7 @@ package com.devsuperior.apigithub.controllers;
 
 import com.devsuperior.apigithub.dto.GitHubUserDetailsDTO;
 import com.devsuperior.apigithub.dto.GitHubUserPageDTO;
+import com.devsuperior.apigithub.dto.GitHubUserRepositoryPageDTO;
 import com.devsuperior.apigithub.services.GitHubUserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -66,4 +67,15 @@ public class GitHubUserControllerIT {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.name").value(expectedDetails.getName()));
     }
 
+    @Test
+    public void testFindUserRepositories_ReturnsUserRepositoryPage() throws Exception {
+        // Arrange
+        GitHubUserRepositoryPageDTO expectedPage = service.getGitHubUserRepositoriesPage(username);
+
+        // Act
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/users/{username}/repos", username))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.content").isArray());
+    }
 }
