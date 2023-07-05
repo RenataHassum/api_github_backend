@@ -3,6 +3,7 @@ package com.devsuperior.apigithub.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.List;
+import java.util.Objects;
 
 public class GitHubUserRepositoryDTO {
 
@@ -954,4 +955,5 @@ public class GitHubUserRepositoryDTO {
     public void setDefaultBranch(String defaultBranch) {
         this.defaultBranch = defaultBranch;
     }
+
 }

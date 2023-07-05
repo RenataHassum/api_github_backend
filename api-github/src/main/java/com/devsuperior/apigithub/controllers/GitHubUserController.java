@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(value = "/api")
-public class GitHibUserController {
+public class GitHubUserController {
 
     @Autowired
     private GitHubUserService service;
