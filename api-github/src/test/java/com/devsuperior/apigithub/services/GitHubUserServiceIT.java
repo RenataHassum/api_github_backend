@@ -58,4 +58,18 @@ public class GitHubUserServiceIT {
         assertThat(resultDto.getName()).isEqualTo(expectedDetails.getName());
     }
 
+    @Test
+    public void testGetGitHubUserRepositoriesPage_ReturnsRepositoryPage() {
+        // Arrange
+        String username = "renatahassum";
+
+        // Act
+        GitHubUserRepositoryPageDTO result = service.getGitHubUserRepositoriesPage(username);
+
+        // Assert
+        assertNotNull(result);
+        assertNotNull(result.getContent());
+        assertFalse(result.getContent().isEmpty());
+    }
+
 }
