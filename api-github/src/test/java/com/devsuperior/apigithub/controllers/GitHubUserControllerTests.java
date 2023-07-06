@@ -40,6 +40,7 @@ public class GitHubUserControllerTests {
     private GitHubUserPageDTO userPage;
     private GitHubUserDetailsDTO userDetails;
     private GitHubUserRepositoryPageDTO userRepositories;
+    private String apiUrlLocal;
 
     @BeforeEach
     void setUp() throws Exception {
@@ -49,6 +50,7 @@ public class GitHubUserControllerTests {
         userPage = new GitHubUserPageDTO();
         userDetails = Factory.createMockGitHubUserDetails();
         userRepositories = Factory.createMockGitHubUserRepositoryPage();
+        apiUrlLocal = "http://localhost:8080/api/users?since=2";
 
         when(service.getGitHubUsersPage(Mockito.eq(sinceId))).thenReturn(userPage);
         when(service.getGitHubUserDetails(Mockito.eq(username))).thenReturn(userDetails);
@@ -58,7 +60,7 @@ public class GitHubUserControllerTests {
     @Test
     public void testFindAllPage_ReturnsUserPageWithNextLink() throws Exception {
         userPage.getContent().addAll(mockUserList);
-        userPage.setNext("http://localhost:8080/api/users?since=2");
+        userPage.setNext(apiUrlLocal);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/api/users")
                         .param("since", String.valueOf(sinceId))

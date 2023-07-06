@@ -16,7 +16,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -33,12 +32,24 @@ public class GitHubUserServiceTests {
     private RestTemplate restTemplate;
 
     private Long sinceId;
+    private String apiUrlExternal;
+    private String apiUrlLocal;
     private List<GitHubUserDTO> mockUserList;
+    private GitHubUserDetailsDTO userDetails;
+    private ResponseEntity<GitHubUserDetailsDTO> mockResponseEntityUserDetails;
+    private List<GitHubUserRepositoryDTO> repositories;
+    private ResponseEntity<List<GitHubUserRepositoryDTO>> mockResponseEntityUserRepositories;
 
     @BeforeEach
     void setUp() throws Exception {
         sinceId = 46L;
+        apiUrlExternal = "https://api.github.com/users?since=" + sinceId;
+        apiUrlLocal = "http://localhost:8080/api/users?since=2";
         mockUserList = Factory.createMockUserList();
+        userDetails = Factory.createMockGitHubUserDetails();
+        mockResponseEntityUserDetails = ResponseEntity.ok(userDetails);
+        repositories = Factory.createMockRepositoryList();
+        mockResponseEntityUserRepositories = ResponseEntity.ok(repositories);
 
         when(restTemplate.exchange(
                 Mockito.anyString(),
@@ -47,12 +58,24 @@ public class GitHubUserServiceTests {
                 Mockito.any(ParameterizedTypeReference.class)
         ))
                 .thenReturn(ResponseEntity.ok(mockUserList));
+
+        when(restTemplate.getForEntity(
+                ArgumentMatchers.anyString(),
+                ArgumentMatchers.eq(GitHubUserDetailsDTO.class)))
+                .thenReturn(mockResponseEntityUserDetails);
+
+        when(restTemplate.exchange(
+                ArgumentMatchers.anyString(),
+                ArgumentMatchers.eq(HttpMethod.GET),
+                ArgumentMatchers.isNull(),
+                ArgumentMatchers.<ParameterizedTypeReference<List<GitHubUserRepositoryDTO>>>any()))
+                .thenReturn(mockResponseEntityUserRepositories);
     }
 
     @Test
     public void testGetGitHubUsersPage_ReturnsPageWithUsersAndNextLink() {
         when(restTemplate.exchange(
-                eq("https://api.github.com/users?since=2"),
+                eq(apiUrlExternal),
                 eq(HttpMethod.GET),
                 isNull(),
                 any(ParameterizedTypeReference.class)
@@ -65,22 +88,11 @@ public class GitHubUserServiceTests {
         assertNotNull(users);
         assertFalse(users.isEmpty());
         assertEquals(mockUserList, users);
-        assertEquals("http://localhost:8080/api/users?since=2", result.getNext());
-
+        assertEquals(apiUrlLocal, result.getNext());
     }
 
     @Test
     public void testGetGitHubUserDetails_ShouldReturnUserDetails() {
-        GitHubUserDetailsDTO userDetails = new GitHubUserDetailsDTO();
-        userDetails.setId(1);
-        userDetails.setLogin("john");
-
-        ResponseEntity<GitHubUserDetailsDTO> mockResponseEntity = ResponseEntity.ok(userDetails);
-        Mockito.when(restTemplate.getForEntity(
-                        ArgumentMatchers.anyString(),
-                        ArgumentMatchers.eq(GitHubUserDetailsDTO.class)))
-                .thenReturn(mockResponseEntity);
-
         GitHubUserDetailsDTO result = service.getGitHubUserDetails("john");
 
         Assertions.assertEquals(userDetails.getId(), result.getId());
@@ -89,20 +101,9 @@ public class GitHubUserServiceTests {
 
     @Test
     public void testGetGitHubUserRepositoriesPage_ShouldReturnRepositoryPage() {
-        List<GitHubUserRepositoryDTO> repositories = new ArrayList<>();
-
-        ResponseEntity<List<GitHubUserRepositoryDTO>> mockResponseEntity = ResponseEntity.ok(repositories);
-        Mockito.when(restTemplate.exchange(
-                        ArgumentMatchers.anyString(),
-                        ArgumentMatchers.eq(HttpMethod.GET),
-                        ArgumentMatchers.isNull(),
-                        ArgumentMatchers.<ParameterizedTypeReference<List<GitHubUserRepositoryDTO>>>any()))
-                .thenReturn(mockResponseEntity);
-
         GitHubUserRepositoryPageDTO result = service.getGitHubUserRepositoriesPage("john");
 
         Assertions.assertEquals(repositories.size(), result.getContent().size());
     }
-
 }
 

@@ -41,10 +41,8 @@ public class GitHubUserControllerIT {
 
     @Test
     public void testFindAllPage_ReturnsUserPage() throws Exception {
-        // Arrange
         GitHubUserPageDTO expectedPage = service.getGitHubUsersPage(sinceId);
 
-        // Act
         mockMvc.perform(MockMvcRequestBuilders.get("/api/users")
                         .param("since", String.valueOf(sinceId)))
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -56,10 +54,8 @@ public class GitHubUserControllerIT {
 
     @Test
     public void testFindUserDetails_ReturnsUserDetails() throws Exception {
-        // Arrange
         GitHubUserDetailsDTO expectedDetails = service.getGitHubUserDetails(username);
 
-        // Act
         mockMvc.perform(MockMvcRequestBuilders.get("/api/users/{username}/details", username))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
@@ -69,10 +65,6 @@ public class GitHubUserControllerIT {
 
     @Test
     public void testFindUserRepositories_ReturnsUserRepositoryPage() throws Exception {
-        // Arrange
-        GitHubUserRepositoryPageDTO expectedPage = service.getGitHubUserRepositoriesPage(username);
-
-        // Act
         mockMvc.perform(MockMvcRequestBuilders.get("/api/users/{username}/repos", username))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
