@@ -3,7 +3,6 @@ package com.devsuperior.apigithub.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.List;
-import java.util.Objects;
 
 public class GitHubUserRepositoryDTO {
 
@@ -22,7 +21,7 @@ public class GitHubUserRepositoryDTO {
     @JsonProperty("html_url")
     private String htmlUrl;
     @JsonProperty("description")
-    private Object description;
+    private String description;
     @JsonProperty("fork")
     private Boolean fork;
     @JsonProperty("url")
@@ -114,7 +113,7 @@ public class GitHubUserRepositoryDTO {
     @JsonProperty("svn_url")
     private String svnUrl;
     @JsonProperty("homepage")
-    private Object homepage;
+    private String homepage;
     @JsonProperty("size")
     private Integer size;
     @JsonProperty("stargazers_count")
@@ -146,7 +145,7 @@ public class GitHubUserRepositoryDTO {
     @JsonProperty("open_issues_count")
     private Integer openIssuesCount;
     @JsonProperty("license")
-    private Object license;
+    private LicenseDTO license;
     @JsonProperty("allow_forking")
     private Boolean allowForking;
     @JsonProperty("is_template")
@@ -154,7 +153,7 @@ public class GitHubUserRepositoryDTO {
     @JsonProperty("web_commit_signoff_required")
     private Boolean webCommitSignoffRequired;
     @JsonProperty("topics")
-    private List<Object> topics;
+    private List<String> topics;
     @JsonProperty("visibility")
     private String visibility;
     @JsonProperty("forks")
@@ -237,12 +236,12 @@ public class GitHubUserRepositoryDTO {
     }
 
     @JsonProperty("description")
-    public Object getDescription() {
+    public String getDescription() {
         return description;
     }
 
     @JsonProperty("description")
-    public void setDescription(Object description) {
+    public void setDescription(String description) {
         this.description = description;
     }
 
@@ -697,12 +696,12 @@ public class GitHubUserRepositoryDTO {
     }
 
     @JsonProperty("homepage")
-    public Object getHomepage() {
+    public String getHomepage() {
         return homepage;
     }
 
     @JsonProperty("homepage")
-    public void setHomepage(Object homepage) {
+    public void setHomepage(String homepage) {
         this.homepage = homepage;
     }
 
@@ -857,12 +856,12 @@ public class GitHubUserRepositoryDTO {
     }
 
     @JsonProperty("license")
-    public Object getLicense() {
+    public LicenseDTO getLicense() {
         return license;
     }
 
     @JsonProperty("license")
-    public void setLicense(Object license) {
+    public void setLicense(LicenseDTO license) {
         this.license = license;
     }
 
@@ -897,12 +896,12 @@ public class GitHubUserRepositoryDTO {
     }
 
     @JsonProperty("topics")
-    public List<Object> getTopics() {
+    public List<String> getTopics() {
         return topics;
     }
 
     @JsonProperty("topics")
-    public void setTopics(List<Object> topics) {
+    public void setTopics(List<String> topics) {
         this.topics = topics;
     }
 
